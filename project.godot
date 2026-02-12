@@ -14,8 +14,14 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Gamer One - Breakout"
+config/name="Planet Defense"
 config/features=PackedStringArray("4.6", "GL Compatibility")
+run/main_scene="res://scenes/main.tscn"
+
+[autoload]
+
+GameManager="*res://scripts/autoload/game_manager.gd"
+AudioManager="*res://scripts/autoload/audio_manager.gd"
 
 [display]
 

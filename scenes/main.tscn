@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/main.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/game/background.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/game/camera_shake.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/game/crosshair.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/game/planet.tscn" id="5"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="Node2D" parent="."]
+script = ExtResource("2")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(400, 300)
+script = ExtResource("3")
+
+[node name="GameWorld" type="Node2D" parent="."]
+
+[node name="Planet" parent="GameWorld" instance=ExtResource("5")]
+position = Vector2(400, 300)
+
+[node name="Missiles" type="Node2D" parent="GameWorld"]
+
+[node name="Interceptors" type="Node2D" parent="GameWorld/Missiles"]
+z_index = 3
+
+[node name="Enemies" type="Node2D" parent="GameWorld/Missiles"]
+z_index = 2
+
+[node name="Blasts" type="Node2D" parent="GameWorld"]
+z_index = 4
+
+[node name="Effects" type="Node2D" parent="GameWorld"]
+z_index = 5
+
+[node name="Crosshair" type="Sprite2D" parent="."]
+z_index = 10
+script = ExtResource("4")
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+process_mode = 3

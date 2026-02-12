@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="GameConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/game_config.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+planet_radius = 80.0
+initial_silo_count = 6
+rotation_speed = 0.15
+silo_hit_tolerance = 15.0
+silo_target_ratio = 0.6
+interceptor_speed = 400.0
+blast_radius = 40.0
+blast_expand_time = 0.3
+blast_hold_time = 0.2
+blast_fade_time = 0.2
+silo_reload_time = 1.5
+enemy_speed_min_base = 80.0
+enemy_speed_max_base = 120.0
+enemy_speed_escalation = 8.0
+enemy_speed_max_escalation = 12.0
+enemy_speed_cap = 300.0
+initial_enemy_count = 6
+enemy_count_escalation = 2
+enemy_count_cap = 60
+spawn_margin = 20.0
+trail_lifetime = 5.0
+mirv_start_wave = 5
+mirv_base_chance = 0.15
+mirv_chance_per_wave = 0.03
+mirv_chance_cap = 0.55
+mirv_split_dist_min = 150.0
+mirv_split_dist_max = 250.0
+mirv_min_warheads = 2
+mirv_max_warheads = 4
+mirv_warhead_spread = 0.52
+points_enemy_kill = 100
+points_mirv_presplit = 250
+points_warhead_kill = 75
+wave_clear_bonus = 500
+silo_survival_bonus = 200
+accuracy_bonus_threshold = 0.8
+accuracy_bonus = 300
+silo_repair_cost_mult = 5000
+wave_start_delay = 1.5
+burst_interval = 2.0
+spawn_interval = 0.3
