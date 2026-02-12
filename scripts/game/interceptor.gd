@@ -10,7 +10,7 @@ var _arrived: bool = false
 @onready var trail: Line2D = $Trail
 @onready var head: Node2D = $Head
 
-const TRAIL_POINT_CAP := 300
+const TRAIL_POINT_CAP := 200
 const ARRIVAL_THRESHOLD := 5.0
 
 

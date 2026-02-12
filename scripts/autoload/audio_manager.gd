@@ -56,10 +56,11 @@ func _make_stream(samples: PackedFloat32Array) -> AudioStreamWAV:
 	stream.stereo = false
 
 	var data := PackedByteArray()
-	data.resize(samples.size() * 2)
 	for i in samples.size():
 		var val: int = clampi(int(samples[i] * 32767.0), -32768, 32767)
-		data.encode_s16(i * 2, val)
+		# Little-endian 16-bit signed
+		data.append(val & 0xFF)
+		data.append((val >> 8) & 0xFF)
 
 	stream.data = data
 	return stream

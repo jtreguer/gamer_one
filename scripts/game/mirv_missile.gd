@@ -24,7 +24,7 @@ var _pulse_phase: float = 0.0
 @onready var trail: Line2D = $Trail
 @onready var head: Node2D = $Head
 
-const TRAIL_POINT_CAP := 300
+const TRAIL_POINT_CAP := 200
 const PULSE_SPEED := 4.0
 
 
@@ -69,10 +69,12 @@ func _process(delta: float) -> void:
 	# Move toward target
 	global_position += _direction * speed * delta
 
-	# Add trail point
-	trail.add_point(trail.to_local(global_position))
-	if trail.get_point_count() > TRAIL_POINT_CAP:
-		trail.remove_point(0)
+	# Add trail point (every 3rd frame for performance)
+	_frame_count += 1
+	if _frame_count % 3 == 0:
+		trail.add_point(trail.to_local(global_position))
+		if trail.get_point_count() > TRAIL_POINT_CAP:
+			trail.remove_point(0)
 
 	# Check if close enough to planet to split
 	var dist_to_center: float = global_position.distance_to(planet_center)
