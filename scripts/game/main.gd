@@ -42,6 +42,7 @@ func _ready() -> void:
 	GameManager.wave_started.connect(_on_wave_started)
 	GameManager.silo_repair_requested.connect(_on_silo_repair_requested)
 	GameManager.game_restarted.connect(_on_game_restarted)
+	GameManager.game_state_changed.connect(_on_game_state_changed)
 
 	# Connect HUD to silo manager
 	hud.connect_silo_manager(planet.silo_manager)
@@ -298,6 +299,16 @@ func _on_silo_destroyed(_silo_index: int, _silo_position: Vector2) -> void:
 
 func _on_all_silos_destroyed() -> void:
 	GameManager.on_all_silos_destroyed()
+
+
+func _on_game_state_changed(new_state: GameManager.GameState) -> void:
+	var playing: bool = (new_state == GameManager.GameState.PLAYING)
+	game_world.visible = playing
+	crosshair.visible = playing
+	if playing:
+		Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	else:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func _on_silo_repair_requested() -> void:

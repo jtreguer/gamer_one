@@ -104,6 +104,7 @@ func _on_card_purchased(upgrade_id: String) -> void:
 	if upgrade_id == "silo_repair":
 		var cost: int = GameManager.config.silo_repair_cost_mult * GameManager.current_wave
 		if GameManager.purchase_upgrade(upgrade_id, cost):
+			AudioManager.play_sfx("purchase")
 			_request_silo_repair()
 			_refresh_cards()
 	else:
@@ -113,6 +114,7 @@ func _on_card_purchased(upgrade_id: String) -> void:
 			return
 		var cost: int = _get_cost(def, level)
 		if GameManager.purchase_upgrade(upgrade_id, cost):
+			AudioManager.play_sfx("purchase")
 			_refresh_cards()
 
 
