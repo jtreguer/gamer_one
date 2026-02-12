@@ -14,6 +14,8 @@ signal wave_completed(wave_number: int)
 signal wave_enemies_all_spawned()
 signal score_changed(new_score: int)
 signal game_over_triggered()
+signal silo_repair_requested()
+signal game_restarted()
 
 var config: GameConfig
 var current_state: GameState = GameState.MENU
@@ -30,6 +32,9 @@ var upgrade_levels: Dictionary = {
 var current_wave_data: WaveData = null
 var wave_enemies_spawned: bool = false
 var active_silo_count: int = 0
+var total_enemies_destroyed: int = 0
+var total_shots_fired: int = 0
+var total_shots_hit: int = 0
 
 
 func _ready() -> void:
@@ -47,6 +52,9 @@ func start_game() -> void:
 	current_wave = 0
 	shots_fired = 0
 	shots_hit = 0
+	total_enemies_destroyed = 0
+	total_shots_fired = 0
+	total_shots_hit = 0
 	upgrade_levels = {
 		"interceptor_speed": 0,
 		"blast_radius": 0,
@@ -57,6 +65,7 @@ func start_game() -> void:
 
 
 func restart_game() -> void:
+	game_restarted.emit()
 	start_game()
 
 
@@ -80,7 +89,6 @@ func on_all_enemies_resolved() -> void:
 		return
 	var bonuses: int = calculate_wave_bonuses()
 	add_score(bonuses)
-	transition_to(GameState.WAVE_TRANSITION)
 	wave_completed.emit(current_wave)
 	transition_to(GameState.UPGRADE_SHOP)
 
@@ -104,10 +112,22 @@ func add_score(points: int) -> void:
 
 func record_shot_fired() -> void:
 	shots_fired += 1
+	total_shots_fired += 1
 
 
 func record_shot_hit() -> void:
 	shots_hit += 1
+	total_shots_hit += 1
+
+
+func record_enemy_destroyed() -> void:
+	total_enemies_destroyed += 1
+
+
+func get_overall_accuracy() -> float:
+	if total_shots_fired == 0:
+		return 0.0
+	return clampf(float(total_shots_hit) / float(total_shots_fired), 0.0, 1.0)
 
 
 func get_wave_accuracy() -> float:

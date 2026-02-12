@@ -1,10 +1,14 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/game/main.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/game/background.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/game/camera_shake.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/game/crosshair.gd" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/game/planet.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/wave_announce.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/upgrade_shop.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_over.tscn" id="9"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1")
@@ -41,3 +45,11 @@ script = ExtResource("4")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 process_mode = 3
+
+[node name="HUD" parent="UILayer" instance=ExtResource("6")]
+
+[node name="WaveAnnounce" parent="UILayer" instance=ExtResource("7")]
+
+[node name="UpgradeShop" parent="UILayer" instance=ExtResource("8")]
+
+[node name="GameOverScreen" parent="UILayer" instance=ExtResource("9")]

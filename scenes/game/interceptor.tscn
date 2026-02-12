@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/interceptor.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/game/missile_head.gd" id="2"]
+
+[node name="Interceptor" type="Node2D"]
+z_index = 3
+script = ExtResource("1")
+
+[node name="Trail" type="Line2D" parent="."]
+z_index = 3
+
+[node name="Head" type="Node2D" parent="."]
+z_index = 5
+script = ExtResource("2")
+head_color = Color(0.251, 0.816, 1, 1)
+head_radius = 3.0

@@ -20,8 +20,8 @@ func _spawn_silos() -> void:
 	for i in initial_silo_count:
 		var silo: Node2D = SiloScene.instantiate()
 		var angle: float = (float(i) / float(initial_silo_count)) * TAU
-		silo.setup(angle, GameManager.config.silo_reload_time)
 		add_child(silo)
+		silo.setup(angle, GameManager.config.silo_reload_time)
 		silos.append(silo)
 	_update_silo_positions()
 	_emit_silo_count()
@@ -90,6 +90,24 @@ func get_active_silo_count() -> int:
 		if silo.state != silo.SiloState.DESTROYED:
 			count += 1
 	return count
+
+
+func repair_one_silo() -> void:
+	for silo in silos:
+		if silo.state == Silo.SiloState.DESTROYED:
+			silo.state = Silo.SiloState.READY
+			silo.silo_sprite.queue_redraw()
+			_emit_silo_count()
+			return
+
+
+func reset_all_silos() -> void:
+	for silo in silos:
+		silo.state = Silo.SiloState.READY
+		silo.reload_timer.stop()
+		silo.reload_indicator.visible = false
+		silo.silo_sprite.queue_redraw()
+	_emit_silo_count()
 
 
 func _emit_silo_count() -> void:

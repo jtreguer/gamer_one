@@ -16,6 +16,6 @@ func _draw() -> void:
 
 	var progress: float = silo.get_reload_progress()
 	var arc_angle: float = progress * TAU
-	var color := ColorPalette.SILO_READY
+	var color := Color(0.251, 1.0, 0.251)
 	color.a = 0.6
 	draw_arc(Vector2.ZERO, INDICATOR_RADIUS, -PI / 2.0, -PI / 2.0 + arc_angle, 16, color, INDICATOR_WIDTH)

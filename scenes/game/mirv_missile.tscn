@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/game/mirv_missile.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/game/missile_head.gd" id="2"]
+
+[node name="MIRVMissile" type="Node2D"]
+z_index = 2
+script = ExtResource("1")
+
+[node name="Trail" type="Line2D" parent="."]
+z_index = 2
+
+[node name="Head" type="Node2D" parent="."]
+z_index = 5
+script = ExtResource("2")
+head_color = Color(1, 0.667, 0.125, 1)
+head_radius = 5.0

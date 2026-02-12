@@ -8,11 +8,11 @@ func _draw() -> void:
 
 	match silo.state:
 		silo.SiloState.READY:
-			color = ColorPalette.SILO_READY
+			color = Color(0.251, 1.0, 0.251)
 		silo.SiloState.RELOADING:
-			color = ColorPalette.SILO_RELOADING
+			color = Color(0.165, 0.400, 0.188)
 		silo.SiloState.DESTROYED:
-			color = ColorPalette.SILO_DESTROYED
+			color = Color(0.290, 0.102, 0.039)
 
 	if silo.state == silo.SiloState.DESTROYED:
 		# Draw a small crater
