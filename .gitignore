@@ -1,0 +1,24 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Godot-specific ignores
+*.translation
+
+# Imported resources
+.import/
+
+# Exported builds
+export/
+builds/
+*.pck
+*.zip
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
