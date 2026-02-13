@@ -1,10 +1,11 @@
 extends Node2D
 
+@onready var _blast: Node2D = get_parent()
+
 
 func _draw() -> void:
-	var blast: Node2D = get_parent()
-	var radius: float = blast.current_radius
-	var alpha: float = blast.current_alpha
+	var radius: float = _blast.current_radius
+	var alpha: float = _blast.current_alpha
 
 	if radius <= 0.0:
 		return

@@ -25,11 +25,12 @@ func _process(delta: float) -> void:
 		_flash_timer -= delta
 		if _flash_timer <= 0.0:
 			_flash_timer = 0.0
-	queue_redraw()
+			queue_redraw()
 
 
 func flash_reject() -> void:
 	_flash_timer = reject_flash_duration
+	queue_redraw()
 
 
 func _draw() -> void:

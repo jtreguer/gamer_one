@@ -18,7 +18,7 @@ var warhead_count: int = 2
 var _direction: Vector2 = Vector2.ZERO
 var _is_alive: bool = true
 var _has_split: bool = false
-var _frame_count: int = 0
+var _trail_timer: float = 0.0
 var _pulse_phase: float = 0.0
 
 @onready var trail: Line2D = $Trail
@@ -42,18 +42,18 @@ func setup(
 	warhead_count = num_warheads
 	_direction = from.direction_to(to)
 	# Configure trail — top_level so it stays in world space
-	$Trail.top_level = true
-	$Trail.global_position = Vector2.ZERO
-	$Trail.clear_points()
-	$Trail.width = trail_width
+	trail.top_level = true
+	trail.global_position = Vector2.ZERO
+	trail.clear_points()
+	trail.width = trail_width
 	var gradient := Gradient.new()
 	gradient.set_color(0, Color(trail_color.r, trail_color.g, trail_color.b, 0.0))
 	gradient.set_color(1, Color(trail_color.r, trail_color.g, trail_color.b, 1.0))
-	$Trail.gradient = gradient
+	trail.gradient = gradient
 	# Configure head (larger, pulsing)
-	$Head.head_color = head_color
-	$Head.head_radius = head_radius
-	$Head.queue_redraw()
+	head.head_color = head_color
+	head.head_radius = head_radius
+	head.queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -63,15 +63,16 @@ func _process(delta: float) -> void:
 	# Pulsing glow effect
 	_pulse_phase += PULSE_SPEED * delta
 	var pulse_scale: float = 1.0 + 0.3 * sin(_pulse_phase)
-	$Head.head_radius = head_radius * pulse_scale
-	$Head.queue_redraw()
+	head.head_radius = head_radius * pulse_scale
+	head.queue_redraw()
 
 	# Move toward target
 	global_position += _direction * speed * delta
 
-	# Add trail point (every 3rd frame for performance)
-	_frame_count += 1
-	if _frame_count % 3 == 0:
+	# Add trail point (time-based for frame-rate independence)
+	_trail_timer += delta
+	if _trail_timer >= 0.05:
+		_trail_timer -= 0.05
 		trail.add_point(trail.to_local(global_position))
 		if trail.get_point_count() > TRAIL_POINT_CAP:
 			trail.remove_point(0)
@@ -90,7 +91,7 @@ func destroy() -> void:
 	if not _is_alive:
 		return
 	_is_alive = false
-	$Head.visible = false
+	head.visible = false
 	# Pre-split kill — bonus points
 	enemy_destroyed.emit(global_position, false, true)
 	# Fade trail then free
@@ -102,7 +103,7 @@ func destroy() -> void:
 func _split() -> void:
 	_has_split = true
 	_is_alive = false
-	$Head.visible = false
+	head.visible = false
 
 	# Generate spread warhead targets on the circumference
 	var targets: Array[Vector2] = _generate_warhead_targets()

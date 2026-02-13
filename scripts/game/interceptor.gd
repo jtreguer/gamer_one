@@ -6,12 +6,14 @@ var target: Vector2 = Vector2.ZERO
 var speed: float = 400.0
 var _direction: Vector2 = Vector2.ZERO
 var _arrived: bool = false
+var _trail_timer: float = 0.0
 
 @onready var trail: Line2D = $Trail
 @onready var head: Node2D = $Head
 
 const TRAIL_POINT_CAP := 200
 const ARRIVAL_THRESHOLD := 5.0
+const TRAIL_INTERVAL: float = 0.03  # Slightly faster than enemies since interceptors move quicker
 
 
 func setup(from: Vector2, to: Vector2, interceptor_speed: float) -> void:
@@ -20,14 +22,14 @@ func setup(from: Vector2, to: Vector2, interceptor_speed: float) -> void:
 	speed = interceptor_speed
 	_direction = from.direction_to(to)
 	# Configure trail — top_level so it stays in world space
-	$Trail.top_level = true
-	$Trail.global_position = Vector2.ZERO
-	$Trail.clear_points()
-	$Trail.width = 2.0
+	trail.top_level = true
+	trail.global_position = Vector2.ZERO
+	trail.clear_points()
+	trail.width = 2.0
 	var gradient := Gradient.new()
 	gradient.set_color(0, Color(0.251, 0.816, 1.0, 0.0))
 	gradient.set_color(1, Color(0.251, 0.816, 1.0, 1.0))
-	$Trail.gradient = gradient
+	trail.gradient = gradient
 
 
 func _process(delta: float) -> void:
@@ -45,10 +47,13 @@ func _process(delta: float) -> void:
 
 	global_position += _direction * step
 
-	# Add trail point
-	trail.add_point(trail.to_local(global_position))
-	if trail.get_point_count() > TRAIL_POINT_CAP:
-		trail.remove_point(0)
+	# Add trail point (time-based for frame-rate independence)
+	_trail_timer += delta
+	if _trail_timer >= TRAIL_INTERVAL:
+		_trail_timer -= TRAIL_INTERVAL
+		trail.add_point(trail.to_local(global_position))
+		if trail.get_point_count() > TRAIL_POINT_CAP:
+			trail.remove_point(0)
 
 
 func _arrive() -> void:

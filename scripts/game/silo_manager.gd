@@ -8,8 +8,12 @@ signal silo_count_changed(active_count: int)
 @export var silo_hit_tolerance: float = 15.0
 
 var silos: Array[Node2D] = []
+var _last_applied_rotation: float = -1.0
 
 const SiloScene := preload("res://scenes/game/silo.tscn")
+const ROTATION_THRESHOLD: float = 0.02
+
+@onready var _planet: Node2D = get_parent()
 
 
 func _ready() -> void:
@@ -28,13 +32,15 @@ func _spawn_silos() -> void:
 
 
 func _process(_delta: float) -> void:
-	_update_silo_positions()
+	var rot: float = _planet.current_rotation
+	if absf(rot - _last_applied_rotation) >= ROTATION_THRESHOLD:
+		_last_applied_rotation = rot
+		_update_silo_positions()
 
 
 func _update_silo_positions() -> void:
-	var planet: Node2D = get_parent()
-	var radius: float = planet.planet_radius
-	var rot: float = planet.current_rotation
+	var radius: float = _planet.planet_radius
+	var rot: float = _planet.current_rotation
 
 	for silo in silos:
 		var angle: float = silo.base_angle + rot

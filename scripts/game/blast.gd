@@ -1,6 +1,7 @@
 extends Node2D
 
 signal blast_enemy_caught(enemy: Node2D, blast_position: Vector2)
+signal multi_kill_detected(count: int, pos: Vector2)
 
 enum BlastPhase {
 	EXPANDING,
@@ -20,6 +21,7 @@ var _elapsed: float = 0.0
 var _caught_enemies: Dictionary = {}  # Track which enemies this blast already caught
 var _kill_count: int = 0
 var _enemies_container: Node2D = null
+var _cached_radius_sq: float = 0.0
 
 @onready var blast_visual: Node2D = $BlastVisual
 
@@ -40,8 +42,10 @@ func _process(delta: float) -> void:
 		BlastPhase.EXPANDING:
 			current_radius = max_radius * (_elapsed / expand_time)
 			current_alpha = 1.0
+			_cached_radius_sq = current_radius * current_radius
 			if _elapsed >= expand_time:
 				current_radius = max_radius
+				_cached_radius_sq = max_radius * max_radius
 				_elapsed = 0.0
 				phase = BlastPhase.HOLDING
 		BlastPhase.HOLDING:
@@ -50,9 +54,8 @@ func _process(delta: float) -> void:
 			if _elapsed >= hold_time:
 				_elapsed = 0.0
 				phase = BlastPhase.FADING
-				# Check for multi-kill
 				if _kill_count >= 3:
-					get_parent().get_parent().emit_signal("multi_kill", _kill_count, global_position)
+					multi_kill_detected.emit(_kill_count, global_position)
 		BlastPhase.FADING:
 			current_radius = max_radius
 			current_alpha = 1.0 - (_elapsed / fade_time)
@@ -68,14 +71,17 @@ func _process(delta: float) -> void:
 
 
 func _check_enemy_hits() -> void:
-	var radius_sq: float = current_radius * current_radius
-	for enemy in _enemies_container.get_children():
-		if not enemy.has_method("is_alive") or not enemy.is_alive():
+	var count: int = _enemies_container.get_child_count()
+	for i in count:
+		var enemy: Node2D = _enemies_container.get_child(i) as Node2D
+		if enemy == null:
+			continue
+		if not enemy.is_alive():
 			continue
 		if _caught_enemies.has(enemy.get_instance_id()):
 			continue
 		var dist_sq: float = global_position.distance_squared_to(enemy.global_position)
-		if dist_sq <= radius_sq:
+		if dist_sq <= _cached_radius_sq:
 			_caught_enemies[enemy.get_instance_id()] = true
 			_kill_count += 1
 			enemy.destroy()

@@ -1,7 +1,6 @@
 extends Node2D
 
 signal click_rejected(reason: String)
-signal multi_kill(count: int, pos: Vector2)
 
 @onready var planet: Node2D = $GameWorld/Planet
 @onready var crosshair: Sprite2D = $Crosshair
@@ -28,11 +27,12 @@ var _burst_timer: float = 0.0
 var _spawn_timer: float = 0.0
 var _wave_start_timer: float = 0.0
 var _waiting_wave_start: bool = false
+var _viewport_size: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	_viewport_size = get_viewport_rect().size
 	click_rejected.connect(_on_click_rejected)
-	multi_kill.connect(_on_multi_kill)
 
 	# Connect silo manager signals
 	planet.silo_manager.silo_destroyed.connect(_on_silo_destroyed)
@@ -116,6 +116,7 @@ func _spawn_blast(pos: Vector2) -> void:
 	blasts_container.add_child(blast)
 	blast.setup(pos, GameManager.get_effective_blast_radius(), enemies_container)
 	blast.blast_enemy_caught.connect(_on_blast_enemy_caught)
+	blast.multi_kill_detected.connect(_on_multi_kill)
 
 
 func _on_blast_enemy_caught(_enemy: Node2D, _blast_position: Vector2) -> void:
@@ -128,7 +129,7 @@ func _spawn_enemy_or_mirv(is_silo_targeted: bool) -> void:
 	var wave_data: WaveData = GameManager.current_wave_data
 	var p_center: Vector2 = planet.global_position
 	var p_radius: float = planet.planet_radius
-	var vp_size: Vector2 = get_viewport_rect().size
+	var vp_size: Vector2 = _viewport_size
 
 	# Determine target on planet circumference
 	var target_pos: Vector2 = _pick_target(is_silo_targeted, p_center, p_radius)
@@ -197,13 +198,14 @@ func _pick_target(is_silo_targeted: bool, p_center: Vector2, p_radius: float) ->
 
 
 func _get_random_active_silo() -> Node2D:
-	var active: Array[Node2D] = []
+	var selected: Node2D = null
+	var count: int = 0
 	for silo in planet.silo_manager.silos:
 		if silo.state != Silo.SiloState.DESTROYED:
-			active.append(silo)
-	if active.is_empty():
-		return null
-	return active[randi() % active.size()]
+			count += 1
+			if randi() % count == 0:
+				selected = silo
+	return selected
 
 
 func _on_enemy_impacted(impact_pos: Vector2) -> void:

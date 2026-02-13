@@ -2,19 +2,27 @@ extends Node2D
 
 const INDICATOR_RADIUS := 12.0
 const INDICATOR_WIDTH := 2.0
+const REDRAW_INTERVAL: float = 0.05  # 20fps for reload arc
 
-func _process(_delta: float) -> void:
-	var silo: Node2D = get_parent()
-	if silo.state == silo.SiloState.RELOADING:
-		queue_redraw()
+var _redraw_accumulator: float = 0.0
+
+@onready var _silo: Node2D = get_parent()
+
+func _process(delta: float) -> void:
+	if _silo.state == _silo.SiloState.RELOADING:
+		_redraw_accumulator += delta
+		if _redraw_accumulator >= REDRAW_INTERVAL:
+			_redraw_accumulator = 0.0
+			queue_redraw()
+	else:
+		_redraw_accumulator = 0.0
 
 
 func _draw() -> void:
-	var silo: Node2D = get_parent()
-	if silo.state != silo.SiloState.RELOADING:
+	if _silo.state != _silo.SiloState.RELOADING:
 		return
 
-	var progress: float = silo.get_reload_progress()
+	var progress: float = _silo.get_reload_progress()
 	var arc_angle: float = progress * TAU
 	var color := Color(0.251, 1.0, 0.251)
 	color.a = 0.6

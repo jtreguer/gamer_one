@@ -4,6 +4,9 @@ extends Node2D
 @export var rotation_speed: float = 0.15
 
 var current_rotation: float = 0.0
+var _last_drawn_rotation: float = -1.0
+
+const REDRAW_THRESHOLD: float = 0.02
 
 @onready var planet_body: Node2D = $PlanetBody
 @onready var silo_manager: Node2D = $Silos
@@ -13,7 +16,9 @@ func _process(delta: float) -> void:
 	current_rotation += rotation_speed * delta
 	if current_rotation > TAU:
 		current_rotation -= TAU
-	planet_body.queue_redraw()
+	if absf(current_rotation - _last_drawn_rotation) >= REDRAW_THRESHOLD:
+		_last_drawn_rotation = current_rotation
+		planet_body.queue_redraw()
 
 
 func is_point_inside(point: Vector2) -> bool:
